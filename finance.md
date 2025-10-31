@@ -38,6 +38,8 @@ If you already hold the underlying stock, and then you sell a call option, which
 If you buy the stock and sell the call option simultaneously, which is **Buy-Write**.
 
 ***They are exactly the same strategy.***
+
+The biggest loss of CC is not Forced liquidation, but your opportunity cost (you miss an opportunity of big increase)
 ### *Example*
 You own one underlying stock: $100
 
@@ -55,7 +57,7 @@ so your total loss is \$100 - \$10 = \$90.
 
 If the stock price rise to \$200 ($S_T = 200$),  
 the buyer will exercise,  
-as the seller it is your obligation to sell it at K = \$110, your option payoff is $C10 - \max(0, 200 - 110) = 10 - 90 = +-\$80$, 
+as the seller it is your obligation to sell it at K = \$110, your option payoff is $10 - \max(0, 200 - 110) = 10 - 90 = +-\$80$, 
 so your total profit = \$100 + (-\$80) = \$20
 
 | Stock Price | Option Payoff | Stock Payoff | Total P&L |
@@ -83,4 +85,58 @@ Profit ($)
 ```                     
 
 ## Protected Put (Married Put) Long stock + long put
-Similar as above, 
+You own stock (or just bought it) at $S_0$.
+You buy a put option (strike $K$, premium $P$).
+The put gives you the right to sell the stock at $K$.
+So if the stock falls, the put’s value rises → your loss is limited.
+If the stock rises, you keep the upside minus the cost of the put premium.
+
+Protected Put means you already own asset, Married Put means you will need to buy it, but they are same strategy.
+
+### *Example*
+You own one underlying stock: **\$100**
+
+Strike price of the put: **\$95**  
+Premium: **\$5**
+
+**Long Put Payoff =  max(0, $K − S_T$) − $P$**
+
+If the stock price rises to **\$150 ($S_T = 150$)**,  
+the buyer (you) will not exercise the put,  
+so the option payoff is ` max(0, 95 − 150) − 5 = 0 − 5 = –$5 `. 
+
+Your stock gains `150 − 100 = +$50`.  
+→ **Total profit = +\$50 − \$5 = +\$45.**
+
+If the stock price drops to **\$50 ($S_T = 50$)**,  
+you will exercise the put and sell the stock at \$95,  
+so the option payoff is `$max(0, 95 − 50) − 5 = 45 − 5 = +\$40`.  
+Your stock loss is `50 − 100 = –\$50`.  
+→ **Total = –\$50 + \$40 = –\$10 (max loss).**
+
+| **Stock Price** | **Option Payoff (Put)** | **Stock Payoff** | **Total P&L** |
+|-----------------|-------------------------|------------------|---------------|
+| $0   | +$90 – $5 = +$85 | –$100 | **–$15** |
+| $50  | +$45 – $5 = +$40 | –$50  | **–$10** |
+| $80  | +$15 – $5 = +$10 | –$20  | **–$10** |
+| $95  | +$0 – $5 = –$5  | –$5   | **–$10** |
+| $100 | –$5 | $0 | **–$5** |
+| $120 | –$5 | +$20 | **+$15** |
+| $150 | –$5 | +$50 | **+$45** |
+
+✅ **Maximum loss = –$10 (≈ put premium + price gap if K < S₀)**  
+✅ **Unlimited profit potential = as stock rises**
+
+```plaintext
+Profit ($)
+     ^
+ +45 |                       /
+     |                      /
+     |                     /
+     |                    /
+   0 |___________________/
+     |                   \
+     |                    \
+ -10 |--------------------→  Stock Price ($)
+      50   80   95  100  120  150
+```
