@@ -104,4 +104,149 @@ $((1-P_A)(1-P_B))^2P_A$
 Total probability of A win $P(A $ wins$) = P_A + (1-P_A)(1-P_B)P_A + ((1-P_A)(1-P_B))^2P_A$
 
 We can express the probability as 
-$(1-P_A)^k(1-P_B)^kP_A$ s
+$(1-P_A)^k(1-P_B)^kP_A$
+which is absolutely a **geometric series**
+#### Geometric Series Formulas
+
+##### Finite Sum
+$$
+S_n = a + ar + ar^2 + \cdots + ar^{n-1} = a \frac{1 - r^n}{1 - r} \quad (r \neq 1)
+$$
+
+> If $ r = 1 $: $ S_n = n a $
+
+##### Infinite Sum ($ |r| < 1 $)
+$$
+S = a + ar + ar^2 + \cdots = \dfrac{a}{1 - r}
+$$
+
+$1-P_A = \frac{31}{36}$ and $1-P_B = \frac{5}{6}$
+
+### 9. What is the angle between hour and minute needle at 3.15?
+
+Here is a picture of clock
+![alt text](./img/QuantQuestion/9/image.png "Title")
+
+Hour hand move $360/12=30\degree$ each hour, so it move $30/60=0.5\degree$ each minute.
+
+Minute hand move $360/60=6\degree$ each minute.
+
+So for hour hand,  3.15, we see 12 o'clock is the start, and 3 o'clock is $90\degree$. 3.15 would be $90 + 15\times 0.5 = 97.5\degree$
+
+For minute hand, 15min would be $6\times15=90\degree$
+
+So the angle would be $97.5-90=7.5\degree$
+
+### 10. How many golfballs can fit in a boeing 747. (Ridiculous and senseless question)
+
+A classic Fermi estimation question. Ask a bit more questions before asking, showing you are really thinking, like "Do we consider the 747 to be completely empty, or is it a fitted passenger plane with seats, overhead compartments etc". 
+
+Then estimate the size of objects, golfball and boeing 747. Here is the formula you need:
+
+***1. Volume of a Cylinder***
+
+**Formula:**
+
+\[
+V = \pi r^2 h
+\]
+
+**Parameters:**
+- \( r \): radius of the base  
+- \( h \): height of the cylinder  
+- \( \pi \approx 3.14159 \)
+
+
+***2. Volume of a Sphere***
+
+**Formula:**
+
+\[
+V = \frac{4}{3}\pi r^3
+\]
+
+**Parameters:**
+- \( r \): radius of the sphere  
+
+We may say golfball is a sphere and boeing is cylinder, because the wing cannot contain anything.
+
+For a golfball, radius could be **1.5cm** in diameter, and boeing is **20 meter high, 200 meter long**. So the volume of golfball is about $1.8*10^{-3} m^{2}$, of boeing is $62800 m^{2}$, there would be $3.5*10^{7}$ golfballs. However, it would be impossible for all the balls to perfectly fit in the airplane, hence there is still a certain amount of free space. We may say 5% space can would be empty, so $3.3*10^{7}$. If the interviewer says there is seat, compartments, we may say it's about 60% space can be used for golfball, so $2.0*10^{7}$.
+
+***The important thing is, showing your logic and how you gather and process information, explain you do not have exact parameters, value and data, so you can only estimate it. Talk more instead of giving calculations***
+
+### 11. If you flip a coin 100 times, how many heads do you expect?
+
+The expect value is average value so 50 if it is a fair coin.
+
+### 12. How many windows are in London? (Ridiculous and senseless question)
+
+Another Fermi estimation question. This kind question always need diverse set of knowledge. The population of London is about 9 millions (9,000,000).
+
+Many object have windows, this includes homes, offices, shops, cars, buses, trains.
+
+We can say 10 windows per household so 5 per person
+Public place, like school, office, shops, we may say 8 per person
+Transport like bus, underground, 2 per person
+
+So 15 per person, $9,000,000\times 15 = 1.5*10^{8}$ windows
+
+### 13. Two trains start toward each other from different cities… when do they meet?
+
+No exact value is annoying, that means you set up your variable names.
+
+Distance betweens citis: $D$
+Speed for train1: $v_{1}$
+Speed for train2: $v_{2}$
+Time: $t$
+
+$v_{1}t + v_{2}t = D$
+$t = \frac{D}{v_{1}+v_{2}}$
+
+### 14. Why are manhole covers round? (Ridiculous and senseless question)
+
+1. A round cover cannot fall through its own opening
+
+A circle has the same diameter in all directions.
+So the cover, no matter how you rotate it, can’t slip into the hole.
+This is the most important reason.
+
+2. Easier to move
+
+Round covers can be rolled instead of lifted, which is safer and requires less effort.
+
+3. No need to align
+
+A circular cover fits the opening in any rotation, so workers don’t need to orient it before placing it back.
+
+4. Even distribution of pressure
+
+Earth pressure around the manhole is uniform, and a circular shape handles this stress efficiently.
+
+5. Cheaper to manufacture
+
+A circular frame and cover are mechanically simple and strong, reducing complexity.
+
+### 15. In 23 people group, what is the probability that two people have the same birthday?
+
+***Ignore leap years here***
+$P = \frac{1}{365}$
+
+So probability for 23 people they all have different birthday $P(N) = \frac{365\times364\times...\times365-23+1}{365^{23}} = 0.49$
+
+$P(at\ leat\ two\ have\ same) = 1-0.49 = 0.50$
+
+### 16. You have 8 balls, one heavier. How to find it in 2 weighings?
+
+Into 3 groups:
+Group A: 3 balls
+Group B: 3 balls
+Group C: 2 balls
+
+Comparing A and B, there are 3 cases:
+If A and B are equal, then heavier one is in C
+Compare 2 balls in C can find it
+
+If A is heavier, then heavier one is in A, so comparing the 3 within group A
+Compare two balls 1 and 2 within A, if 1 or 2 are different, we can find the heavier one. If they are same, 3 is heavier. 
+
+If B is heavier, then heavier one is in A, so comparing the 3 within group B

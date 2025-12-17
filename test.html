@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    /* Container styles */
+    .viz-container {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        max-width: 650px;
+        margin: 20px auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #fff;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* The "Slide" area */
+    .slide-stage {
+        height: 350px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #fafafa;
+        padding: 20px;
+    }
+
+    /* Array Styling */
+    .array-row { display: flex; gap: 8px; margin-bottom: 50px; position: relative; }
+    .cell {
+        width: 60px; height: 60px;
+        background: white; border: 2px solid #333;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; font-weight: bold; border-radius: 6px;
+        position: relative;
+        transition: all 0.3s;
+    }
+    .idx-label {
+        position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+        font-size: 14px; color: #888; font-weight: normal;
+    }
+    
+    /* Pointers */
+    .pointer {
+        position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
+        font-size: 16px; font-weight: bold;
+    }
+    .p-L { color: #d32f2f; bottom: -40px; } /* Red for Left */
+    .p-R { color: #1976d2; bottom: -60px; } /* Blue for Right */
+    .p-M { color: #f57c00; bottom: -80px; } /* Orange for Mid */
+
+    /* Highlights */
+    .hl-mid { background-color: #ffe0b2; border-color: #f57c00; }
+    .hl-check { background-color: #e3f2fd; }
+
+    /* Explanation Text */
+    .explanation {
+        text-align: center;
+        font-size: 18px;
+        line-height: 1.5;
+        height: 80px;
+        color: #333;
+        padding: 0 20px;
+    }
+    .code-snippet {
+        font-family: monospace; background: #eee; padding: 2px 5px; border-radius: 4px; color: #d32f2f;
+    }
+
+    /* Navigation Controls (similar to your request) */
+    .nav-btn {
+        cursor: pointer; position: absolute; top: 45%; 
+        font-size: 2.5em; color: rgba(0,0,0,0.6); 
+        user-select: none; transition: 0.2s;
+        text-decoration: none;
+    }
+    .nav-btn:hover { color: black; }
+    #btn-left { left: 15px; }
+    #btn-right { right: 15px; }
+
+    .counter {
+        position: absolute; bottom: 15px; right: 20px;
+        background: rgba(0,0,0,0.6); color: white;
+        padding: 5px 12px; border-radius: 15px;
+        font-size: 14px;
+    }
+</style>
+</head>
+<body>
+
+<div class="viz-container" id="viz-root">
+    
+    <a id="btn-left" class="nav-btn">&#10094;</a>
+    <a id="btn-right" class="nav-btn">&#10095;</a>
+    
+    <div class="slide-stage" id="stage">
+        </div>
+
+    <div class="counter" id="page-counter">1 / 10</div>
+</div>
+
+<script>
+(function(){
+    // === DATA & STATE ===
+    const nums = [2, 5, 5, 5, 9];
+    const target = 5;
+    
+    // We pre-calculate the "slides" (states) of the algorithm
+    // Each object represents one step of the visualization
+    const slides = [
+        { L:0, R:4, M:null, msg: "<b>Start:</b> Range is [0, 4]. We want to find the <i>first</i> 5.", hl: [] },
+        { L:0, R:4, M:2,    msg: "<b>Step 1:</b> Calculate Mid.<br><code>mid = (0 + 4) // 2 = 2</code>.<br>Value is <b>5</b>.", hl: [2] },
+        { L:0, R:4, M:2,    msg: "<b>Step 2:</b> Compare <code>nums[mid]</code> vs target.<br>5 == 5.<br>Since it's not smaller, we assume the answer might be to the <b>left</b>.", hl: [2] },
+        { L:0, R:1, M:null, msg: "<b>Step 3:</b> Update Right.<br><code>right = mid - 1 = 1</code>.<br>We discarded index 2 to find earlier ones.", hl: [] },
+        
+        { L:0, R:1, M:0,    msg: "<b>Step 4:</b> Calculate Mid.<br><code>mid = (0 + 1) // 2 = 0</code>.<br>Value is <b>2</b>.", hl: [0] },
+        { L:0, R:1, M:0,    msg: "<b>Step 5:</b> Compare.<br>2 < 5 is <b>True</b>.<br>The target must be to the right.", hl: [0] },
+        { L:1, R:1, M:null, msg: "<b>Step 6:</b> Update Left.<br><code>left = mid + 1 = 1</code>.", hl: [] },
+        
+        { L:1, R:1, M:1,    msg: "<b>Step 7:</b> Calculate Mid.<br><code>mid = (1 + 1) // 2 = 1</code>.<br>Value is <b>5</b>.", hl: [1] },
+        { L:1, R:1, M:1,    msg: "<b>Step 8:</b> Compare.<br>5 == 5.<br>Crucial Step: Even though we found 5, we squeeze Left.<br><code>right = mid - 1</code>.", hl: [1] },
+        
+        { L:1, R:0, M:null, msg: "<b>End:</b> Loop breaks because <code>left > right</code> (1 > 0).<br><b>Return Left (1)</b>.", hl: [] }
+    ];
+
+    let currentIndex = 0;
+    
+    // DOM Elements
+    const stage = document.getElementById('stage');
+    const counter = document.getElementById('page-counter');
+    const btnLeft = document.getElementById('btn-left');
+    const btnRight = document.getElementById('btn-right');
+
+    function render() {
+        const state = slides[currentIndex];
+        
+        // Build Array HTML
+        let arrayHtml = '<div class="array-row">';
+        nums.forEach((val, i) => {
+            let classes = 'cell';
+            if (state.hl.includes(i)) classes += ' hl-mid';
+            
+            // Pointers
+            let pointers = '';
+            // Only show L and R if the loop isn't broken (except for final state visual)
+            if (state.L <= 4 && i === state.L) pointers += '<div class="pointer p-L">L</div>';
+            if (state.R >= 0 && i === state.R) pointers += '<div class="pointer p-R">R</div>';
+            if (state.M !== null && i === state.M) pointers += '<div class="pointer p-M">M</div>';
+
+            arrayHtml += `
+                <div class="${classes}">
+                    <span class="idx-label">${i}</span>
+                    ${val}
+                    ${pointers}
+                </div>
+            `;
+        });
+        arrayHtml += '</div>';
+
+        // Build Text HTML
+        let textHtml = `<div class="explanation">${state.msg}</div>`;
+
+        stage.innerHTML = arrayHtml + textHtml;
+        counter.textContent = `${currentIndex + 1} / ${slides.length}`;
+        
+        // Button States
+        btnLeft.style.opacity = currentIndex === 0 ? "0.3" : "1";
+        btnRight.style.opacity = currentIndex === slides.length - 1 ? "0.3" : "1";
+    }
+
+    // Interaction
+    btnLeft.onclick = () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            render();
+        }
+    };
+
+    btnRight.onclick = () => {
+        if (currentIndex < slides.length - 1) {
+            currentIndex++;
+            render();
+        }
+    };
+
+    // Init
+    render();
+})();
+</script>
+
+</body>
+</html>
